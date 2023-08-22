@@ -12,6 +12,8 @@ public class MovingCube : MonoBehaviour, IPointerClickHandler
     [SerializeField] public int _number;
     [SerializeField] public int positionOnGrid;
     [HideInInspector] public Vector3 cubePositionOnScene;
+
+
     [HideInInspector] public BoardManip board;
     [HideInInspector] private int diff;
     [HideInInspector] private bool stillMoving;
@@ -21,10 +23,15 @@ public class MovingCube : MonoBehaviour, IPointerClickHandler
     private void Awake()
     {
         diff = 0;
-        cubePositionOnScene = transform.position;
+        
         board = GetComponentInParent<BoardManip>();
         positionOnGrid = _number - 1;
         stillMoving= false;
+    }
+
+    public void Start()
+    {
+        cubePositionOnScene = transform.position;
     }
 
     public void OnPointerClick(PointerEventData eventData)
@@ -42,7 +49,7 @@ public class MovingCube : MonoBehaviour, IPointerClickHandler
                 stillMoving = true;
                 diff = positionOnGrid - board.emptyCubeGridPosition;
                 cubePositionOnScene = board.cubes[board.emptyCubeGridPosition].transform.position;
-                board.cubes[board.emptyCubeGridPosition].transform.position = transform.position;
+                board.cubes[board.emptyCubeGridPosition].transform.position = board.cubes[board.emptyCubeGridPosition].cubePositionOnScene = transform.position;
             }
         }
     }
@@ -80,10 +87,11 @@ public class MovingCube : MonoBehaviour, IPointerClickHandler
                     transform.position = cubePositionOnScene;
                     (board.cubes[positionOnGrid], board.cubes[board.emptyCubeGridPosition]) = (board.cubes[board.emptyCubeGridPosition], board.cubes[positionOnGrid]);
                     (positionOnGrid, board.emptyCubeGridPosition) = (board.emptyCubeGridPosition, positionOnGrid);
-
+                    board.cubes[board.emptyCubeGridPosition].positionOnGrid = board.emptyCubeGridPosition;
                     board.alreadyMoving = false;
                     stillMoving = false;
                     onPlace = false;
+                  
                 }
             }
         }

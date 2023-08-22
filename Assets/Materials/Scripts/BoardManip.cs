@@ -17,16 +17,18 @@ public class BoardManip : MonoBehaviour
 
     [HideInInspector] public int numberOfSwapingCubes;
     [HideInInspector] public bool sortingDone;
+    [HideInInspector] public bool puzzleAssembled;
 
-    enum DIRECTION
+    [HideInInspector] public enum DIRECTION
     {
         UP, DOWN, LEFT, RIGHT, NONE
     }
 
     public void Awake()
     {
+
         sortingDone = false;
-        numberOfSwapingCubes = 50;
+        numberOfSwapingCubes = 100;
         alreadyMoving = false;
         numberOfCubes = _cubeObjects.Length;
         cubes = new MovingCube[numberOfCubes];
@@ -39,58 +41,85 @@ public class BoardManip : MonoBehaviour
 
     private void Start()
     {
-
+        puzzleAssembled = true;
     }
 
     void Update()
     {
         if (sortingDone)
         {
+            float deltaX, deltaY;
+            sortingDone = false;
             for (int i = 0; i < numberOfCubes; ++i)
             {
-                cubes[i].transform.position = cubes[i].cubePositionOnScene;
+               if (cubes[i].transform.position != cubes[i].cubePositionOnScene)
+                {
+                    sortingDone |= true;
+                    deltaX = cubes[i].transform.position.x - cubes[i].cubePositionOnScene.x;
+                    deltaY = cubes[i].transform.position.y - cubes[i].cubePositionOnScene.y;
+                    cubes[i].transform.Translate(cubesSpeed * Time.deltaTime * (deltaX > 0 ? (-1) : 1), cubesSpeed * Time.deltaTime * (deltaY > 0 ? (-1) : 1), 0);
+                    if (Math.Abs(cubes[i].transform.position.x - cubes[i].cubePositionOnScene.x) <= 0.1 &&
+                        Math.Abs(cubes[i].transform.position.y - cubes[i].cubePositionOnScene.y) <= 0.1)
+                    {
+                        cubes[i].transform.position = cubes[i].cubePositionOnScene;
+                    }
+                }
             }
-            sortingDone = false;
         }
+
+        if (!puzzleAssembled && cubes[numberOfCubes-1]._number == numberOfCubes)
+        {
+            foreach(var cube in cubes)
+            {
+                if(cube._number != cube.positionOnGrid+1) { return; }
+            }
+
+
+        }
+
     }
 
     public void SortingBoard()
     {
+        System.Random rand = new System.Random();
         DIRECTION dir;
         DIRECTION lastDir = DIRECTION.NONE;
-        System.Random rand = new System.Random();
+        //for (int i = 0; i < numberOfSwapingCubes; ++i)
+        //{
+        //    swapCubes(emptyCubeGridPosition, rand.Next(0, 15));
+        //}
+        for (int i = 0; i < numberOfSwapingCubes;)
+        {
+            dir = (DIRECTION)(rand.Next(0, 100) % 4);
 
-
-        for (int i = 0; i < numberOfSwapingCubes; ) {
-            dir = (DIRECTION)rand.Next(0,3);
-            if (dir == lastDir) { continue; }
             switch (dir)
             {
                 case DIRECTION.UP:
-                    if (emptyCubeGridPosition <= 3) { continue; }
+                    if (emptyCubeGridPosition <= 3 || (lastDir == DIRECTION.DOWN)) { break; }
                     swapCubes(emptyCubeGridPosition, emptyCubeGridPosition - 4);
                     i++;
                     break;
                 case DIRECTION.DOWN:
-                    if (emptyCubeGridPosition >= 11) { continue; }
+                    if (emptyCubeGridPosition >= 11 || (lastDir == DIRECTION.UP)) { break; }
                     swapCubes(emptyCubeGridPosition, emptyCubeGridPosition + 4);
                     i++;
                     break;
                 case DIRECTION.LEFT:
-                    if (emptyCubeGridPosition % 4 == 0) { continue; }
-                    swapCubes(emptyCubeGridPosition, emptyCubeGridPosition -1);
+                    if (emptyCubeGridPosition % 4 == 0 || (lastDir == DIRECTION.RIGHT)) { break; }
+                    swapCubes(emptyCubeGridPosition, emptyCubeGridPosition - 1);
                     i++;
                     break;
                 case DIRECTION.RIGHT:
-                    if ((emptyCubeGridPosition + 1) % 4 == 0) { continue; }
+                    if ((emptyCubeGridPosition + 1) % 4 == 0 || (lastDir == DIRECTION.LEFT)) { break; }
                     swapCubes(emptyCubeGridPosition, emptyCubeGridPosition + 1);
                     i++;
                     break;
             }
-            lastDir = dir;
+
         }
 
         sortingDone = true;
+        puzzleAssembled = false;
     }
 
     private void swapCubes(int c1, int c2)
