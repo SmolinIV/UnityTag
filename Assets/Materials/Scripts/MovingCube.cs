@@ -36,7 +36,7 @@ public class MovingCube : MonoBehaviour, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (_number == 16) { return; }
+        if (_number == 16 || board.gameIsStarting == false) { return; }
 
         if (!board.alreadyMoving)
         {
@@ -47,6 +47,7 @@ public class MovingCube : MonoBehaviour, IPointerClickHandler
                 board.slidingCubeNumber = _number;
                 board.alreadyMoving = true;
                 stillMoving = true;
+                ++board.playerSteps;
                 diff = positionOnGrid - board.emptyCubeGridPosition;
                 cubePositionOnScene = board.cubes[board.emptyCubeGridPosition].transform.position;
                 board.cubes[board.emptyCubeGridPosition].transform.position = board.cubes[board.emptyCubeGridPosition].cubePositionOnScene = transform.position;

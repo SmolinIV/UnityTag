@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class BoardManip : MonoBehaviour
 {
@@ -18,6 +19,11 @@ public class BoardManip : MonoBehaviour
     [HideInInspector] public int numberOfSwapingCubes;
     [HideInInspector] public bool sortingDone;
     [HideInInspector] public bool puzzleAssembled;
+    [HideInInspector] public bool gameIsStarting;
+    [HideInInspector] public int playerSteps;
+    [HideInInspector] public int bestStepsScore;
+    [HideInInspector] public int best_time;
+    [SerializeField] public Text objStep;
 
     [HideInInspector] public enum DIRECTION
     {
@@ -27,8 +33,11 @@ public class BoardManip : MonoBehaviour
     public void Awake()
     {
 
+        playerSteps = 0;
+        bestStepsScore = 10000;
+        gameIsStarting = false;
         sortingDone = false;
-        numberOfSwapingCubes = 100;
+        numberOfSwapingCubes = 10;
         alreadyMoving = false;
         numberOfCubes = _cubeObjects.Length;
         cubes = new MovingCube[numberOfCubes];
@@ -46,6 +55,8 @@ public class BoardManip : MonoBehaviour
 
     void Update()
     {
+        objStep.text = playerSteps.ToString();
+
         if (sortingDone)
         {
             float deltaX, deltaY;
@@ -54,7 +65,7 @@ public class BoardManip : MonoBehaviour
             {
                if (cubes[i].transform.position != cubes[i].cubePositionOnScene)
                 {
-                    sortingDone |= true;
+                    sortingDone = true;
                     deltaX = cubes[i].transform.position.x - cubes[i].cubePositionOnScene.x;
                     deltaY = cubes[i].transform.position.y - cubes[i].cubePositionOnScene.y;
                     cubes[i].transform.Translate(cubesSpeed * Time.deltaTime * (deltaX > 0 ? (-1) : 1), cubesSpeed * Time.deltaTime * (deltaY > 0 ? (-1) : 1), 0);
@@ -74,6 +85,8 @@ public class BoardManip : MonoBehaviour
                 if(cube._number != cube.positionOnGrid+1) { return; }
             }
 
+            puzzleAssembled = true;
+            gameIsStarting = false;
 
         }
 
@@ -84,10 +97,7 @@ public class BoardManip : MonoBehaviour
         System.Random rand = new System.Random();
         DIRECTION dir;
         DIRECTION lastDir = DIRECTION.NONE;
-        //for (int i = 0; i < numberOfSwapingCubes; ++i)
-        //{
-        //    swapCubes(emptyCubeGridPosition, rand.Next(0, 15));
-        //}
+
         for (int i = 0; i < numberOfSwapingCubes;)
         {
             dir = (DIRECTION)(rand.Next(0, 100) % 4);
@@ -120,6 +130,15 @@ public class BoardManip : MonoBehaviour
 
         sortingDone = true;
         puzzleAssembled = false;
+        gameIsStarting = true;
+
+        if (playerSteps < bestStepsScore)
+        {
+            bestStepsScore = playerSteps;
+        }
+        playerSteps = 0;
+
+        
     }
 
     private void swapCubes(int c1, int c2)

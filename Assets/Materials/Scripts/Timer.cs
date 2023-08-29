@@ -8,28 +8,58 @@ public class Timer : MonoBehaviour
 
     [HideInInspector] public int sec, min;
     [HideInInspector] private Text timerText;
+    [HideInInspector] bool firstStarting = true;
+    [HideInInspector] int codeToStartTimer = 1;
+    [HideInInspector] public GameObject objBoard;
+    [HideInInspector] public BoardManip board;
 
     public void Start()
     {
         timerText = GameObject.Find("Timer").GetComponent<Text>();
+        sec = -1;
+        min = 0;
+        objBoard = GameObject.FindGameObjectWithTag("board");
+        board = objBoard.GetComponent<BoardManip>();
     }
     // Update is called once per frame
     void Update()
     {
-        
     }
 
     IEnumerator TimeFlow()
     {
         while (true)
         {
-            if (sec== 60)
+            if (board.puzzleAssembled == false)
             {
-                sec = -1;
-                min++;
+                if (sec == 60)
+                {
+                    sec = -1;
+                    min++;
+                }
+                sec++;
+                timerText.text = min.ToString("D2") + ":" + sec.ToString("D2");
             }
-            sec++;
             yield return new WaitForSeconds(1);
         }
+    }
+
+    public void resetTimer(int launchPermissiion)
+    {
+        if (launchPermissiion == codeToStartTimer)
+        {
+            if (firstStarting == true)
+            {
+                StartCoroutine(TimeFlow());
+                firstStarting = false;
+            }
+            else
+            {
+                sec = 0;
+                min = 0;
+                timerText.text = min.ToString("D2") + ":" + sec.ToString("D2");
+            }
+        }
+
     }
 }
