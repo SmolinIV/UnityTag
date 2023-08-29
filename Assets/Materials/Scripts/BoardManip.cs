@@ -24,6 +24,9 @@ public class BoardManip : MonoBehaviour
     [HideInInspector] public int bestStepsScore;
     [HideInInspector] public int best_time;
     [SerializeField] public Text objStep;
+    [SerializeField] public GameObject OK;
+    [SerializeField] public AudioSource OKsound;
+    [HideInInspector] public bool isPlayerWin;
 
     [HideInInspector] public enum DIRECTION
     {
@@ -32,7 +35,7 @@ public class BoardManip : MonoBehaviour
 
     public void Awake()
     {
-
+        OKsound = GetComponent<AudioSource>();
         playerSteps = 0;
         bestStepsScore = 10000;
         gameIsStarting = false;
@@ -46,11 +49,13 @@ public class BoardManip : MonoBehaviour
             cubes[i] = _cubeObjects[i].GetComponent<MovingCube>();
         }
         emptyCubeGridPosition = numberOfCubes - 1;
+        OK.gameObject.SetActive(false);
     }
 
     private void Start()
     {
         puzzleAssembled = true;
+        isPlayerWin = false;
     }
 
     void Update()
@@ -87,13 +92,17 @@ public class BoardManip : MonoBehaviour
 
             puzzleAssembled = true;
             gameIsStarting = false;
-
+            OK.gameObject.SetActive(true);
+            isPlayerWin = true;
+            OKsound.Play();
         }
 
     }
 
     public void SortingBoard()
     {
+        OK.gameObject.SetActive (false);
+        isPlayerWin = false;
         System.Random rand = new System.Random();
         DIRECTION dir;
         DIRECTION lastDir = DIRECTION.NONE;

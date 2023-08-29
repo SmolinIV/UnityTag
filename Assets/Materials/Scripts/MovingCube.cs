@@ -13,7 +13,7 @@ public class MovingCube : MonoBehaviour, IPointerClickHandler
     [SerializeField] public int positionOnGrid;
     [HideInInspector] public Vector3 cubePositionOnScene;
 
-
+    [SerializeField] public AudioSource cubeCollision;
     [HideInInspector] public BoardManip board;
     [HideInInspector] private int diff;
     [HideInInspector] private bool stillMoving;
@@ -23,7 +23,7 @@ public class MovingCube : MonoBehaviour, IPointerClickHandler
     private void Awake()
     {
         diff = 0;
-        
+        cubeCollision = GetComponent<AudioSource>();
         board = GetComponentInParent<BoardManip>();
         positionOnGrid = _number - 1;
         stillMoving= false;
@@ -92,7 +92,10 @@ public class MovingCube : MonoBehaviour, IPointerClickHandler
                     board.alreadyMoving = false;
                     stillMoving = false;
                     onPlace = false;
-                  
+                    if (board.gameIsStarting == true)
+                    {
+                        cubeCollision.Play();
+                    }
                 }
             }
         }

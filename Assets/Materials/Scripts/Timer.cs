@@ -7,7 +7,7 @@ public class Timer : MonoBehaviour
 {
 
     [HideInInspector] public int sec, min;
-    [HideInInspector] private Text timerText;
+    [HideInInspector] public Text timerText;
     [HideInInspector] bool firstStarting = true;
     [HideInInspector] int codeToStartTimer = 1;
     [HideInInspector] public GameObject objBoard;
@@ -21,7 +21,7 @@ public class Timer : MonoBehaviour
         objBoard = GameObject.FindGameObjectWithTag("board");
         board = objBoard.GetComponent<BoardManip>();
     }
-    // Update is called once per frame
+
     void Update()
     {
     }

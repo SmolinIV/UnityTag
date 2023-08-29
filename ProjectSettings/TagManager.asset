@@ -7,6 +7,8 @@ TagManager:
   - Empty
   - Cube
   - board
+  - toptime
+  - topsteps
   layers:
   - Default
   - TransparentFX
