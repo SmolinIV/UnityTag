@@ -17,7 +17,8 @@ public class BoardManip : MonoBehaviour
     [HideInInspector] public int slidingCubeNumber;
 
     [HideInInspector] public int numberOfSwapingCubes;
-    [HideInInspector] public bool sortingDone;
+    [HideInInspector] public bool sortingFunctionDone;
+    [HideInInspector] public bool inSorting;
     [HideInInspector] public bool puzzleAssembled;
     [HideInInspector] public bool gameIsStarting;
     [HideInInspector] public int playerSteps;
@@ -36,12 +37,13 @@ public class BoardManip : MonoBehaviour
 
     public void Awake()
     {
+        inSorting = false;
         soundsON = true;
         OKsound = GetComponent<AudioSource>();
         playerSteps = 0;
         bestStepsScore = 10000;
         gameIsStarting = false;
-        sortingDone = false;
+        sortingFunctionDone = false;
         numberOfSwapingCubes = 100;
         alreadyMoving = false;
         numberOfCubes = _cubeObjects.Length;
@@ -64,25 +66,27 @@ public class BoardManip : MonoBehaviour
     {
         objStep.text = playerSteps.ToString();
 
-        if (sortingDone)
+        if (sortingFunctionDone)
         {
             float deltaX, deltaY;
-            sortingDone = false;
+            //sortingDone = false;
             for (int i = 0; i < numberOfCubes; ++i)
             {
-               if (cubes[i].transform.position != cubes[i].cubePositionOnScene)
-                {
-                    sortingDone = true;
-                    deltaX = cubes[i].transform.position.x - cubes[i].cubePositionOnScene.x;
-                    deltaY = cubes[i].transform.position.y - cubes[i].cubePositionOnScene.y;
-                    cubes[i].transform.Translate(cubesSpeed * Time.deltaTime * (deltaX > 0 ? (-1) : 1), cubesSpeed * Time.deltaTime * (deltaY > 0 ? (-1) : 1), 0);
-                    if (Math.Abs(cubes[i].transform.position.x - cubes[i].cubePositionOnScene.x) <= 0.1 &&
-                        Math.Abs(cubes[i].transform.position.y - cubes[i].cubePositionOnScene.y) <= 0.1)
-                    {
-                        cubes[i].transform.position = cubes[i].cubePositionOnScene;
-                    }
-                }
+                //if (cubes[i].transform.position != cubes[i].cubePositionOnScene)
+                //{
+                ////sortingDone = true;
+                //deltaX = cubes[i].transform.position.x - cubes[i].cubePositionOnScene.x;
+                //deltaY = cubes[i].transform.position.y - cubes[i].cubePositionOnScene.y;
+                //cubes[i].transform.Translate(cubesSpeed * Time.deltaTime * (deltaX > 0 ? (-1) : 1), cubesSpeed * Time.deltaTime * (deltaY > 0 ? (-1) : 1), 0);
+
+                //if (Math.Abs(cubes[i].transform.position.x - cubes[i].cubePositionOnScene.x) <= 0.2 &&
+                //    Math.Abs(cubes[i].transform.position.y - cubes[i].cubePositionOnScene.y) <= 0.2)
+                //{
+                cubes[i].transform.position = cubes[i].cubePositionOnScene;
             }
+            sortingFunctionDone = false;
+            gameIsStarting = true;
+            inSorting = false;
         }
 
         if (!puzzleAssembled && cubes[numberOfCubes-1]._number == numberOfCubes)
@@ -106,6 +110,13 @@ public class BoardManip : MonoBehaviour
 
     public void SortingBoard()
     {
+       if (inSorting == true) { return; }
+
+        inSorting = true;
+        foreach (var cube in cubes)
+        {
+            cube.updatePosition();
+        }
         OK.gameObject.SetActive (false);
         isPlayerWin = false;
         System.Random rand = new System.Random();
@@ -142,9 +153,9 @@ public class BoardManip : MonoBehaviour
 
         }
 
-        sortingDone = true;
+        sortingFunctionDone = true;
         puzzleAssembled = false;
-        gameIsStarting = true;
+        
 
         if (playerSteps < bestStepsScore)
         {
@@ -152,7 +163,6 @@ public class BoardManip : MonoBehaviour
         }
         playerSteps = 0;
 
-        
     }
 
     private void swapCubes(int c1, int c2)

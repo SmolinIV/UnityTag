@@ -100,4 +100,9 @@ public class MovingCube : MonoBehaviour, IPointerClickHandler
             }
         }
     }
+
+    public void updatePosition()
+    {
+        cubePositionOnScene = transform.position;
+    }
 }
