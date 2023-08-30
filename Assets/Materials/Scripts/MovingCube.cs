@@ -92,7 +92,7 @@ public class MovingCube : MonoBehaviour, IPointerClickHandler
                     board.alreadyMoving = false;
                     stillMoving = false;
                     onPlace = false;
-                    if (board.gameIsStarting == true)
+                    if (board.gameIsStarting == true && board.soundsON)
                     {
                         cubeCollision.Play();
                     }

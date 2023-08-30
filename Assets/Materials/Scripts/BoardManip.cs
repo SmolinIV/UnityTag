@@ -27,6 +27,7 @@ public class BoardManip : MonoBehaviour
     [SerializeField] public GameObject OK;
     [SerializeField] public AudioSource OKsound;
     [HideInInspector] public bool isPlayerWin;
+    [HideInInspector] public bool soundsON;
 
     [HideInInspector] public enum DIRECTION
     {
@@ -35,12 +36,13 @@ public class BoardManip : MonoBehaviour
 
     public void Awake()
     {
+        soundsON = true;
         OKsound = GetComponent<AudioSource>();
         playerSteps = 0;
         bestStepsScore = 10000;
         gameIsStarting = false;
         sortingDone = false;
-        numberOfSwapingCubes = 10;
+        numberOfSwapingCubes = 100;
         alreadyMoving = false;
         numberOfCubes = _cubeObjects.Length;
         cubes = new MovingCube[numberOfCubes];
@@ -94,7 +96,10 @@ public class BoardManip : MonoBehaviour
             gameIsStarting = false;
             OK.gameObject.SetActive(true);
             isPlayerWin = true;
-            OKsound.Play();
+            if (soundsON == true)
+            {
+                OKsound.Play();
+            }
         }
 
     }
@@ -156,5 +161,9 @@ public class BoardManip : MonoBehaviour
         (cubes[c1].cubePositionOnScene, cubes[c2].cubePositionOnScene) = (cubes[c2].cubePositionOnScene, cubes[c1].cubePositionOnScene);
         (cubes[c1], cubes[c2]) = (cubes[c2], cubes[c1]);
         emptyCubeGridPosition = c2;
+    }
+    public void onOffSoubds()
+    {
+        soundsON = !soundsON;
     }
 }

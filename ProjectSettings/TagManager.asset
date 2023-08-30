@@ -9,6 +9,8 @@ TagManager:
   - board
   - toptime
   - topsteps
+  - Sounds
+  - Music
   layers:
   - Default
   - TransparentFX
