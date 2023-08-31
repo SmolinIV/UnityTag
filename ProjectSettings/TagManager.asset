@@ -11,6 +11,7 @@ TagManager:
   - topsteps
   - Sounds
   - Music
+  - RateGame
   layers:
   - Default
   - TransparentFX

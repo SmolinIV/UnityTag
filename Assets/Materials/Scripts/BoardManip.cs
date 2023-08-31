@@ -29,6 +29,8 @@ public class BoardManip : MonoBehaviour
     [SerializeField] public AudioSource OKsound;
     [HideInInspector] public bool isPlayerWin;
     [HideInInspector] public bool soundsON;
+    [SerializeField] public Button RateButton;
+    [HideInInspector] public int numberofVictories;
 
     [HideInInspector] public enum DIRECTION
     {
@@ -37,6 +39,7 @@ public class BoardManip : MonoBehaviour
 
     public void Awake()
     {
+        numberofVictories = 0;
         inSorting = false;
         soundsON = true;
         OKsound = GetComponent<AudioSource>();
@@ -54,6 +57,8 @@ public class BoardManip : MonoBehaviour
         }
         emptyCubeGridPosition = numberOfCubes - 1;
         OK.gameObject.SetActive(false);
+
+        RateButton.gameObject.SetActive(false);
     }
 
     private void Start()
@@ -103,6 +108,12 @@ public class BoardManip : MonoBehaviour
             if (soundsON == true)
             {
                 OKsound.Play();
+            }
+
+            ++numberofVictories;
+            if (numberofVictories == 1)
+            {
+                RateButton.gameObject.SetActive(true);
             }
         }
 
